@@ -43,6 +43,7 @@ export default function handler(req, res) {
 
       const client = new Client({
         authStrategy: new LocalAuth(),
+        puppeteer: { args: ["--no-sandbox"] },
       });
 
       socket.on("send", async (param) => {
