@@ -1,8 +1,17 @@
 import { Server } from "socket.io";
 import mqtt from "mqtt";
 import { Client, LocalAuth } from "whatsapp-web.js";
+import { v4 as uuidv4 } from "uuid";
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  let id;
+  if (req.cookies.idWhatsapp === undefined) {
+    id = uuidv4();
+    res.setHeader("Set-Cookie", [`idWhatsapp=${id}`]);
+  } else {
+    id = req.cookies.idWhatsapp;
+  }
+
   if (res.socket.server.io) {
     console.log("Socket is already running");
   } else {
@@ -42,10 +51,10 @@ export default function handler(req, res) {
       console.log("socket wa connected");
 
       const client = new Client({
-        authStrategy: new LocalAuth(),
+        authStrategy: new LocalAuth({ clientId: id }),
         puppeteer: {
           headless: true,
-          args: ["--no-sandbox"],
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
         },
       });
 
@@ -79,9 +88,61 @@ export default function handler(req, res) {
         socket.emit("qr", qr);
       });
 
-      client.on("change_state", (state) => {
-        console.log(state);
-      });
+      // client.on("change_state", (state) => {
+      //   socket.emit("display", {
+      //     title: "Change State",
+      //     mess: state,
+      //     typeOfMess: "success",
+      //   });
+      // });
+
+      // client.on("auth_failure", (message) => {
+      //   socket.emit("display", {
+      //     title: "Auth Failure",
+      //     mess: message,
+      //     typeOfMess: "error",
+      //   });
+      // });
+
+      // // client.on("change_battery", (battery_info) => {
+      // //   socket.emit("display", {
+      // //     title: "Change Battery",
+      // //     mess: battery_info.battery + "",
+      // //     typeOfMess: "warning",
+      // //   });
+      // // });
+
+      // client.on("chat_archived", (chat, currState, prevState) => {
+      //   socket.emit("display", {
+      //     title: "Chat Archived",
+      //     mess: chat.lastMessage.body,
+      //     typeOfMess: "warning",
+      //   });
+      // });
+
+      // client.on("chat_removed", (chat) => {
+      //   socket.emit("display", {
+      //     title: "Chat Removed",
+      //     mess: chat.lastMessage.body,
+      //     typeOfMess: "warning",
+      //   });
+      // });
+
+      // client.on("contact_changed", () => {
+      //   socket.emit("display", {
+      //     title: "Contact Changed",
+      //     mess: "Contact Changed",
+      //     typeOfMess: "warning",
+      //   });
+      // });
+
+      // client.on("message_ack", (message, ack) => {
+      //   socket.emit("display", {
+      //     title: "Message ACK",
+      //     mess: message.ack,
+      //     typeOfMess: "warning",
+      //   });
+      // });
 
       client.on("authenticated", (session) => {
         console.log("authenticated");
