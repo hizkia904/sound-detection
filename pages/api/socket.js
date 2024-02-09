@@ -11,6 +11,7 @@ export default async function handler(req, res) {
   } else {
     id = req.cookies.idWhatsapp;
   }
+  console.log(id);
 
   if (res.socket.server.io) {
     console.log("Socket is already running");
