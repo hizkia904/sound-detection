@@ -5,14 +5,14 @@ import { Client, LocalAuth } from "whatsapp-web.js";
 export default async function handler(req, res) {
   const { id } = req.query;
   console.log(id);
-  if (req.socket.server.io) {
+  if (res.socket.server.io) {
     console.log("Socket is already running");
   } else {
     console.log("Socket is initializing");
-    const io = new Server(req.socket.server);
-    req.socket.server.io = io;
+    const io = new Server(res.socket.server);
+    res.socket.server.io = io;
 
-    io.of("/mqtt").on("connection", (socket) => {
+    io.of(`/mqtt_${id}`).on("connection", (socket) => {
       console.log("socket mqtt connected");
 
       const mqttClient = mqtt.connect("mqtt://test.mosquitto.org:1883");
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       });
     });
 
-    io.of("/wa").on("connection", (socket) => {
+    io.of(`/wa_${id}`).on("connection", (socket) => {
       console.log("socket wa connected");
 
       const client = new Client({

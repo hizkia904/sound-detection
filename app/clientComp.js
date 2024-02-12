@@ -61,14 +61,14 @@ export default function Home({ id }) {
     }
 
     await fetch(`/api/${id}`);
-    ioMqtt = io("/mqtt");
+    ioMqtt = io(`/mqtt_${id}`);
     ioMqtt.on("ready", () => {
       setMQTTConnected(true);
     });
     initializeWASocket();
   };
   const initializeWASocket = () => {
-    ioWA = io("/wa");
+    ioWA = io(`/wa_${id}`);
     ioWA.on("qr", (qr) => {
       setQr(qr);
       setReady(false);
