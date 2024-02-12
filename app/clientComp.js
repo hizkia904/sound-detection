@@ -60,16 +60,7 @@ export default function Home({ id }) {
       id = await bikinCookie();
     }
 
-    const data = {
-      id: id,
-    };
-    await fetch(`/api/socket`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    await fetch(`/api/${id}`);
     ioMqtt = io("/mqtt");
     ioMqtt.on("ready", () => {
       setMQTTConnected(true);
