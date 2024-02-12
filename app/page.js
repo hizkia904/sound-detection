@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import Home from "./clientComp";
 
 export const metadata = {
@@ -5,5 +6,8 @@ export const metadata = {
 };
 
 export default async function Page() {
-  return <Home />;
+  const cookieStore = cookies();
+  const reqCookie = cookieStore.get("id");
+  const id = reqCookie !== undefined ? reqCookie.value : undefined;
+  return <Home id={id} />;
 }

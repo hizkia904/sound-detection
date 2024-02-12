@@ -34,6 +34,7 @@ import {
 import { Bar, Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import io from "socket.io-client";
+import { bikinCookie } from "./action";
 const { Content } = Layout;
 const { Title, Text } = Typography;
 const { Group, Button: RadioButton } = Radio;
@@ -42,7 +43,7 @@ Chart.register(...registerables);
 
 let ioMqtt;
 let ioWA;
-export default function Home() {
+export default function Home({ id }) {
   useEffect(() => {
     removeWA();
     socketInitializer();
@@ -55,8 +56,20 @@ export default function Home() {
 
   const socketInitializer = async () => {
     console.log("jalanin socket initializer");
+    if (id === undefined) {
+      id = await bikinCookie();
+    }
 
-    await fetch("/api/socket");
+    const data = {
+      id: id,
+    };
+    await fetch(`/api/socket`, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     ioMqtt = io("/mqtt");
     ioMqtt.on("ready", () => {
       setMQTTConnected(true);
