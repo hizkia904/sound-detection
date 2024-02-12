@@ -359,7 +359,7 @@ export default function Home({ id }) {
                 )
               }
               type={isStarting ? "default" : "primary"}
-              className={styles.floatButton}
+              style={{ right: 24, width: "50px", height: "50px" }}
               onClick={onClickFloatButton}
             />
           ) : undefined}
@@ -367,7 +367,7 @@ export default function Home({ id }) {
             title={
               <>
                 <Space>
-                  <WhatsAppOutlined className={styles.iconColor} /> Whatsapp
+                  <WhatsAppOutlined style={{ color: "green" }} /> Whatsapp
                   <Tooltip title={text} color="green">
                     <Button icon={<QuestionCircleOutlined />} shape="circle" />
                   </Tooltip>
