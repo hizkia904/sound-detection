@@ -59,16 +59,22 @@ export default function Home({ id }) {
     if (id === undefined) {
       id = await bikinCookie();
     }
-
-    await fetch(`/api/${id}`);
-    ioMqtt = io(`/mqtt_${id}`);
+    const data = {
+      id: id,
+    };
+    await fetch("/api/socket", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    });
+    ioMqtt = io(`/mqtt`);
     ioMqtt.on("ready", () => {
       setMQTTConnected(true);
     });
     initializeWASocket();
   };
   const initializeWASocket = () => {
-    ioWA = io(`/wa_${id}`);
+    ioWA = io("/wa");
     ioWA.on("qr", (qr) => {
       setQr(qr);
       setReady(false);
