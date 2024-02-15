@@ -6,12 +6,12 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     const { id } = req.body;
     console.log(id);
-    if (res.socket.server.io) {
+    if (res.socket.server[id]) {
       console.log("Socket is already running");
     } else {
       console.log("Socket is initializing");
       const io = new Server(res.socket.server);
-      res.socket.server.io = io;
+      res.socket.server[id] = io;
 
       io.of("/mqtt").on("connection", (socket) => {
         console.log("socket mqtt connected");
